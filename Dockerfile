@@ -1,5 +1,7 @@
 FROM java:8
 
+RUN apt-get update && apt-get -y install lsof
+
 # Installs Ant
 ENV ANT_VERSION 1.9.4
 RUN cd && \

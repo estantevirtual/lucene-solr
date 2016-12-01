@@ -4,3 +4,7 @@ services:
     build: .
     volumes:
       - .:/lucene-solr
+    command:
+      '/opt/solr-5.3.2-SNAPSHOT/bin/solr start -f -p 8984'
+    ports:
+      - "8984:8984"
