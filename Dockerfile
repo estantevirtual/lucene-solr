@@ -23,6 +23,7 @@ ADD solr/ solr/
 # Install ivy
 RUN ant ivy-bootstrap
 
+# Compile and create package
 RUN ant compile
 
 WORKDIR /lucene-solr/solr
@@ -30,9 +31,16 @@ RUN ant create-package
 
 WORKDIR /lucene-solr
 
+# Install solr
 RUN unzip /lucene-solr/solr/package/solr-5.3.2-SNAPSHOT.zip -d /opt/
 
-RUN cp -r /opt/solr-5.3.2-SNAPSHOT/server/solr/ /solr-home
+# Move solr home to a place easier to access
+RUN mkdir -p /solr-home
+RUN cp -r /opt/solr-5.3.2-SNAPSHOT/server/solr/* /solr-home/
+
+# Copy external libraries
+RUN mkdir -p /solr-home/ext-lib/
+RUN cp /opt/solr-5.3.2-SNAPSHOT/dist/solr-dataimporthandler-5.3.2-SNAPSHOT.jar /solr-home/ext-lib/
 
 CMD /opt/solr-5.3.2-SNAPSHOT/bin/solr start -f -Dsolr.solr.home=/solr-home -p 8983
 
