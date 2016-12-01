@@ -12,15 +12,27 @@ RUN cd && \
 ENV ANT_HOME /opt/ant
 ENV PATH ${PATH}:/opt/ant/bin
 
-ADD . /lucene-solr
-WORKDIR /lucene-solr
+# Add lucene/solr files
+RUN mkdir -p /lucene-solr
 
+WORKDIR /lucene-solr
+ADD build.xml build.xml
+ADD lucene/ lucene/
+ADD solr/ solr/
+
+# Install ivy
 RUN ant ivy-bootstrap
 
 RUN ant compile
-WORKDIR /lucene-solr/solr
 
+WORKDIR /lucene-solr/solr
 RUN ant create-package
+
 WORKDIR /lucene-solr
 
 RUN unzip /lucene-solr/solr/package/solr-5.3.2-SNAPSHOT.zip -d /opt/
+
+RUN cp -r /opt/solr-5.3.2-SNAPSHOT/server/solr/ /solr-home
+
+CMD /opt/solr-5.3.2-SNAPSHOT/bin/solr start -f -Dsolr.solr.home=/solr-home -p 8983
+
